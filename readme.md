@@ -1,6 +1,6 @@
 ⚽ Análisis Exploratorio de Datos (EDA) — Real Betis vs FC Barcelona
 
-Proyecto de análisis exploratorio de datos de un partido de fútbol mediante Python, Pandas, Matplotlib y Power BI. El objetivo es explorar la distribución espacial de los eventos del partido y construir visualizaciones que permitan identificar patrones de actividad en el terreno de juego.
+Proyecto de análisis exploratorio de datos de un partido de fútbol mediante Python, Pandas, Matplotlib y Power BI. El objetivo es explorar la distribución espacial de los eventos del partido y crear visualizaciones que permitan identificar patrones de actividad en el terreno de juego.
 
 🎯 Objetivos del proyecto
 
@@ -44,41 +44,35 @@ El mapa representa las coordenadas de los eventos sobre un campo de fútbol y ut
 
 🔴 Rojo: mayor concentración de eventos.
 
-El dashboard incorpora segmentadores para explorar los datos por equipo y jugador. También permite filtrar por tipo de acción cuando ese campo está disponible en el visual.
+El dashboard incorpora segmentadores para explorar los datos por equipo y jugador. También permite filtrar por tipo de acción cuando el campo correspondiente está disponible en el visual.
 
-El mapa de calor muestra la frecuencia de eventos por zona, no la calidad o la peligrosidad de las acciones.
+El mapa de calor representa la frecuencia de eventos por zona, no la calidad ni la peligrosidad de las acciones.
 
 🗂️ Estructura del proyecto
 
 Datos futbol/
-│
 ├── data/
-│   ├── raw/                 # Datos originales
-│   └── processed/           # Datos preparados para el análisis
-│
+│   ├── raw/
+│   │   └── 3773631.json
+│   └── processed/
+│       ├── eventos_partido.csv
+│       └── tiros_partido.csv
 ├── src/
-│   └── prepare_match.py     # Preparación de los datos del partido
-│
+│   └── prepare_match.py
 ├── reports/
-│   └──                      # Material adicional del proyecto
-│
-├── analisis.ipynb           # Notebook de análisis exploratorio
+├── analisis.ipynb
 ├── Dashboard Barcelona-Betis.pbix
 ├── CampoFutbol_fondo_cesped_web-futbol.jpg
 ├── guia_proceso_analisis_futbol_python_powerbi.pdf
 ├── .gitignore
 └── README.md
 
-La estructura refleja la organización prevista del proyecto. El contenido concreto de las carpetas puede variar según los archivos incluidos en el repositorio.
-
 🚀 Cómo utilizar el proyecto
 
 1. Clonar el repositorio
 
-git clone URL_DE_TU_REPOSITORIO
-cd "Datos futbol"
-
-Sustituye URL_DE_TU_REPOSITORIO por la dirección real del repositorio de GitHub.
+git clone https://github.com/betiman88/eda-futbol-betis-barcelona.git
+cd eda-futbol-betis-barcelona
 
 2. Preparar el entorno de Python
 
@@ -94,19 +88,21 @@ Instala las librerías necesarias:
 
 python -m pip install pandas numpy matplotlib jupyter
 
-3. Explorar los datos
+3. Preparar y explorar los datos
 
-Abre Jupyter Notebook:
+El script src/prepare_match.py se utiliza para preparar los datos del partido.
+
+Para abrir Jupyter Notebook, ejecuta:
 
 jupyter notebook
 
-Cuando el notebook de análisis esté desarrollado, podrás utilizarlo para documentar la exploración, limpieza y visualización de los datos.
+Después, abre analisis.ipynb para trabajar con el análisis exploratorio de datos.
 
-4. Abrir el dashboard
+4. Abrir el dashboard de Power BI
 
 Abre Dashboard Barcelona-Betis.pbix con Power BI Desktop.
 
-Si el informe depende de rutas locales o archivos de datos externos, tendrás que actualizar las rutas de origen para que apunten a los archivos de tu ordenador.
+Si el informe utiliza rutas locales o archivos externos, actualiza las rutas de origen para que apunten a la ubicación de los datos en tu ordenador.
 
 📈 Posibles ampliaciones
 
@@ -114,16 +110,18 @@ Analizar por separado pases, tiros, recuperaciones y conducciones.
 
 Comparar los patrones espaciales de ambos equipos.
 
-Estudiar la distribución de los tiros y los valores de goles esperados (xG), si los datos están disponibles.
+Estudiar la distribución de los tiros y los valores de goles esperados (xG), si están disponibles.
 
 Incorporar indicadores estadísticos y visualizaciones adicionales.
 
-Mejorar la documentación del proceso de limpieza y las conclusiones del análisis.
+Documentar las decisiones de limpieza y las conclusiones del análisis.
+
+Mejorar el dashboard con nuevas visualizaciones y métricas.
 
 👨‍💻 Autor
 
 Proyecto personal de aprendizaje y desarrollo de competencias en análisis de datos, Python y Business Intelligence.
 
-Este proyecto forma parte de mi aprendizaje práctico en análisis exploratorio de datos y visualización.
+Este trabajo forma parte de mi aprendizaje práctico en análisis exploratorio de datos y visualización.
 
-Tecnologías: Python · Pandas · Matplotlib · Jupyter Notebook · Power BI · Git
+Tecnologías: Python · Pandas · NumPy · Matplotlib · Jupyter Notebook · Power BI · Git · GitHub
