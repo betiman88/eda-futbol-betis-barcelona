@@ -1,0 +1,21 @@
+﻿id,index,periodo,minuto,segundo,equipo,jugador,xg,resultado,parte_cuerpo,tipo_tiro,tecnica,primer_toque,mano_a_mano,shot_x,shot_y,end_x,end_y
+3c84cefc-55ea-44e7-8dc0-fe29f00fed46,509,1,10,41,Real Betis,Borja Iglesias Quintas,0.10217343,Blocked,Right Foot,Open Play,Normal,True,,115.3,34.7,115.9,34.9
+a754f978-61c2-453c-8d5b-7eb8ebd7ea02,817,1,17,31,Barcelona,Ousmane Dembélé,0.06957128,Blocked,Right Foot,Open Play,Normal,True,,103.3,44.6,104.2,44.5
+31f3a42e-c7b4-4c83-85b7-8102fcbb24f0,1107,1,24,36,Real Betis,Juan Miguel Jiménez López,0.1273561,Off T,Head,Open Play,Normal,,True,114.0,32.4,120.0,34.8
+082e32fa-d25d-49d5-b103-1ddfb8197a51,1240,1,27,57,Barcelona,Clément Lenglet,0.16972353,Off T,Head,Open Play,Normal,,,113.8,42.7,120.0,34.6
+05696c18-98f8-4ffc-bfe3-e08aab606913,1722,1,37,48,Real Betis,Borja Iglesias Quintas,0.44097158,Goal,Left Foot,Open Play,Normal,True,,111.7,42.4,120.0,42.2
+af6003a6-68de-489c-8160-a9f8e17d323b,2059,1,47,30,Barcelona,Martin Braithwaite Christensen,0.060599968,Off T,Head,Open Play,Normal,,,108.7,40.1,120.0,37.6
+0a4f9e02-39b7-45b3-9b36-95ee45600bc0,2281,2,47,49,Barcelona,Óscar Mingueza García,0.06390779,Saved,Right Foot,Open Play,Normal,True,,101.8,44.9,118.1,38.3
+ea64ce1e-b517-416a-b65c-26091f4d5682,2285,2,48,18,Barcelona,Antoine Griezmann,0.018656503,Wayward,Head,Open Play,Normal,,True,117.0,28.1,117.2,41.1
+a6f631d5-bb36-43c3-b929-9b19a018e325,2466,2,52,41,Barcelona,Antoine Griezmann,0.14799254,Blocked,Left Foot,Open Play,Half Volley,True,,111.8,35.3,113.2,35.2
+f0e72617-d302-4707-9308-4e8d9deb9cee,2565,2,55,10,Real Betis,Juan Miguel Jiménez López,0.3704533,Saved,Right Foot,Open Play,Normal,True,,107.7,34.4,111.7,36.7
+ce2bc463-7f63-40e8-8f02-ee9c5b91545c,2643,2,58,1,Barcelona,Ousmane Dembélé,0.036253028,Off T,Left Foot,Open Play,Normal,,,103.9,56.1,120.0,48.9
+50dd82c0-b06b-427e-8e5b-a50737bb49b9,2681,2,58,55,Barcelona,Lionel Andrés Messi Cuccittini,0.056231674,Goal,Left Foot,Open Play,Normal,,,102.5,52.6,120.0,43.2
+ef757dce-4eda-4f02-9d78-9d6ca9a070ba,2859,2,62,38,Real Betis,Nabil Fekir,0.02668288,Saved,Left Foot,Open Play,Normal,,,99.4,56.2,116.3,42.8
+290e816c-396b-458a-9597-954a9edb6098,2936,2,65,6,Barcelona,Ousmane Dembélé,0.13531347,Blocked,Right Foot,Open Play,Normal,,,109.7,53.0,111.1,51.5
+5dc43002-372d-4572-9e1d-b7b434ac4abd,2942,2,65,42,Barcelona,Óscar Mingueza García,0.11360259,Off T,Head,Open Play,Normal,,,116.6,34.1,120.0,34.7
+6c1330ff-3f4c-4818-9f32-b14e69732372,3311,2,74,5,Real Betis,Víctor Ruíz Torre,0.1947324,Goal,Head,Open Play,Normal,,,116.2,42.2,120.0,39.1
+db9bf530-743a-4619-83c5-a7444e6599eb,3392,2,78,24,Barcelona,Lionel Andrés Messi Cuccittini,0.064184494,Blocked,Left Foot,Free Kick,Normal,,,98.3,52.0,106.7,47.6
+23cdac92-3883-4f28-81a5-07018b64a313,3564,2,82,56,Real Betis,Víctor Ruíz Torre,0.091646455,Saved,Head,Open Play,Normal,,,111.0,44.0,118.3,39.5
+52e07a88-19a2-4af4-b6f2-de683c476ce4,3634,2,84,24,Real Betis,Sergio Canales Madrazo,0.041051574,Blocked,Left Foot,Open Play,Normal,,,97.1,46.0,98.5,45.7
+5c9ab03e-7cbc-4fb1-8950-d60e9396580c,3748,2,86,20,Barcelona,Francisco António Machado Mota de Castro Trincão,0.051537734,Goal,Left Foot,Open Play,Normal,,,102.5,49.9,120.0,37.1
