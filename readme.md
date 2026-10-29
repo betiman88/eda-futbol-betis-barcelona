@@ -1,127 +1,217 @@
-⚽ Análisis Exploratorio de Datos (EDA) — Real Betis vs FC Barcelona
+⚽ Análisis de datos de fútbol con Python y Power BI
 
-Proyecto de análisis exploratorio de datos de un partido de fútbol mediante Python, Pandas, Matplotlib y Power BI. El objetivo es explorar la distribución espacial de los eventos del partido y crear visualizaciones que permitan identificar patrones de actividad en el terreno de juego.
+📌 Descripción del proyecto
 
-🎯 Objetivos del proyecto
+Proyecto de análisis de datos de fútbol basado en StatsBomb Open Data, desarrollado con Python y Power BI.
 
-Explorar y preparar datos de eventos de un partido de fútbol.
+El objetivo es construir un flujo de trabajo que permita seleccionar un partido de fútbol, descargar sus eventos, procesar la información y generar datasets preparados para su análisis y visualización en Power BI.
 
-Analizar la distribución espacial de las acciones sobre el terreno de juego.
+El proyecto comenzó como un análisis exploratorio de un partido entre el Real Betis y el FC Barcelona, y ha evolucionado hacia un proceso reutilizable para analizar diferentes encuentros disponibles en StatsBomb Open Data.
 
-Crear un mapa de calor para identificar las zonas con mayor concentración de eventos.
+Actualmente, el flujo de trabajo permite seleccionar una competición, una temporada y un partido, descargar sus eventos y generar archivos CSV con información estructurada para Power BI.
 
-Desarrollar un dashboard interactivo en Power BI.
+🎯 Objetivos
 
-Permitir el análisis por equipo y jugador mediante segmentadores.
+Trabajar con datos reales de fútbol procedentes de una fuente de datos abierta.
 
-Practicar técnicas de análisis exploratorio de datos (EDA) y visualización.
+Practicar la extracción y transformación de datos con Python.
+
+Procesar datos estructurados en formato JSON.
+
+Limpiar, organizar y transformar eventos futbolísticos.
+
+Preparar datasets para su utilización en herramientas de Business Intelligence.
+
+Crear visualizaciones e indicadores mediante Power BI.
+
+Automatizar progresivamente el flujo de trabajo desde la selección del partido hasta la actualización del informe.
 
 🛠️ Tecnologías utilizadas
 
-Python — preparación y tratamiento de datos.
+Tecnología
 
-Pandas — limpieza y manipulación de datos.
+Uso
 
-NumPy — herramientas para operaciones numéricas.
+Python
 
-Matplotlib — creación de gráficos y mapas de calor.
+Automatización y procesamiento de datos
 
-Jupyter Notebook — entorno de análisis.
+Pandas
 
-Power BI Desktop — visualización interactiva y exploración de resultados.
+Manipulación y transformación de datos
 
-Git y GitHub — control de versiones y publicación del proyecto.
+Requests
 
-📊 Visualización y análisis
+Descarga de datos desde GitHub
 
-El proyecto incluye un dashboard de Power BI con un mapa de calor de los eventos del partido.
+JSON
 
-El mapa representa las coordenadas de los eventos sobre un campo de fútbol y utiliza un gradiente de color para mostrar su concentración espacial:
+Almacenamiento de los datos originales y metadatos
 
-🔵 Azul claro: menor concentración de eventos.
+CSV
 
-🟡 Amarillo: concentración intermedia.
+Exportación de los datasets procesados
 
-🔴 Rojo: mayor concentración de eventos.
+Power BI Desktop
 
-El dashboard incorpora segmentadores para explorar los datos por equipo y jugador. También permite filtrar por tipo de acción cuando el campo correspondiente está disponible en el visual.
+Visualización y análisis de los datos
 
-El mapa de calor representa la frecuencia de eventos por zona, no la calidad ni la peligrosidad de las acciones.
+Pywinauto
 
-🗂️ Estructura del proyecto
+Automatización de la interfaz de Power BI
 
-Datos futbol/
-├── data/
-│   ├── raw/
-│   │   └── 3773631.json
-│   └── processed/
-│       ├── eventos_partido.csv
-│       └── tiros_partido.csv
+Git y GitHub
+
+Control de versiones y documentación del proyecto
+
+🔄 Flujo de trabajo
+
+El proyecto sigue un flujo inspirado en un proceso ETL (Extract, Transform, Load).
+
+Extracción: consulta de las competiciones, temporadas y partidos disponibles en StatsBomb Open Data.
+
+Selección: elección del encuentro que se quiere analizar.
+
+Descarga: obtención de los eventos del partido en formato JSON.
+
+Transformación: procesamiento de los eventos mediante Python y Pandas.
+
+Exportación: generación de archivos CSV preparados para Power BI.
+
+Visualización: análisis de los datos mediante un informe de Power BI.
+
+Actualización: automatización de la apertura y actualización del informe, actualmente en desarrollo.
+
+📂 Estructura del proyecto
+
+eda-futbol-betis-barcelona/
+│
+├── buscador_stats.py
+│
 ├── src/
 │   └── prepare_match.py
-├── reports/
-├── analisis.ipynb
+│
+├── data/
+│   ├── raw/
+│   │   └── {match_id}.json
+│   │
+│   └── processed/
+│       ├── eventos_partido.csv
+│       ├── tiros_partido.csv
+│       └── partido_actual.json
+│
 ├── Dashboard Barcelona-Betis.pbix
-├── CampoFutbol_fondo_cesped_web-futbol.jpg
-├── guia_proceso_analisis_futbol_python_powerbi.pdf
+│
 ├── .gitignore
+├── requirements.txt
 └── README.md
 
-🚀 Cómo utilizar el proyecto
+La estructura representa la organización del proyecto. Los archivos de datos se generan durante la ejecución y pueden estar excluidos del repositorio mediante .gitignore.
+
+📊 Datos generados
+
+eventos_partido.csv
+
+Contiene los eventos del encuentro procesados para facilitar su análisis.
+
+tiros_partido.csv
+
+Contiene información específica de los disparos, incluyendo, entre otros campos:
+
+Equipo y jugador.
+
+Minuto y segundo.
+
+Goles esperados (xG).
+
+Resultado del disparo.
+
+Parte del cuerpo y técnica.
+
+Coordenadas del disparo y de su destino.
+
+Indicadores de primer toque y mano a mano, cuando están disponibles.
+
+partido_actual.json
+
+Guarda los metadatos del encuentro seleccionado, como la competición, la temporada, la fecha, los equipos y el identificador del partido.
+
+📈 Power BI
+
+El proyecto incluye un informe de Power BI para explorar los datos del encuentro y visualizar información futbolística.
+
+Los CSV se generan en rutas fijas para mantener la compatibilidad con las consultas del informe al cambiar de partido.
+
+La actualización automática del informe desde Python está en desarrollo. La descarga y preparación de los datos funcionan; queda terminar de automatizar la interacción con Power BI Desktop y comprobar que la actualización se completa correctamente.
+
+🚀 Instalación y ejecución
+
+Requisitos
+
+Python instalado.
+
+Power BI Desktop.
+
+Git.
+
+Acceso a Internet para descargar los datos de StatsBomb.
 
 1. Clonar el repositorio
 
-git clone https://github.com/betiman88/eda-futbol-betis-barcelona.git
+git clone <URL_DEL_REPOSITORIO>
 cd eda-futbol-betis-barcelona
 
-2. Preparar el entorno de Python
+2. Crear un entorno virtual
 
-Es recomendable utilizar un entorno virtual:
+En Windows, desde la terminal del proyecto:
 
 python -m venv venv
 
-En Windows, activa el entorno desde PowerShell:
+Activar el entorno virtual en PowerShell:
 
 .\venv\Scripts\Activate.ps1
 
-Instala las librerías necesarias:
+Si PowerShell bloquea la ejecución del script de activación, se puede utilizar temporalmente:
 
-python -m pip install pandas numpy matplotlib jupyter
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+.\venv\Scripts\Activate.ps1
 
-3. Preparar y explorar los datos
+3. Instalar las dependencias
 
-El script src/prepare_match.py se utiliza para preparar los datos del partido.
+Si el repositorio contiene requirements.txt:
 
-Para abrir Jupyter Notebook, ejecuta:
+pip install -r requirements.txt
 
-jupyter notebook
+4. Ejecutar el buscador
 
-Después, abre analisis.ipynb para trabajar con el análisis exploratorio de datos.
+python buscador_stats.py
 
-4. Abrir el dashboard de Power BI
+El programa permite seleccionar la competición, la temporada y el partido. Tras confirmar la selección, descarga los datos y ejecuta el procesamiento para generar los CSV.
 
-Abre Dashboard Barcelona-Betis.pbix con Power BI Desktop.
+A continuación, intenta abrir el informe de Power BI y automatizar su actualización.
 
-Si el informe utiliza rutas locales o archivos externos, actualiza las rutas de origen para que apunten a la ubicación de los datos en tu ordenador.
+📚 Fuente de datos
 
-📈 Posibles ampliaciones
+Los datos se obtienen de StatsBomb Open Data:
 
-Analizar por separado pases, tiros, recuperaciones y conducciones.
+https://github.com/statsbomb/open-data
 
-Comparar los patrones espaciales de ambos equipos.
+La disponibilidad de competiciones, temporadas y partidos depende de los datos publicados por StatsBomb.
 
-Estudiar la distribución de los tiros y los valores de goles esperados (xG), si están disponibles.
+🔧 Próximas mejoras
 
-Incorporar indicadores estadísticos y visualizaciones adicionales.
+Completar y validar la actualización automática del informe de Power BI.
 
-Documentar las decisiones de limpieza y las conclusiones del análisis.
+Mejorar la gestión de errores y los tiempos de carga.
 
-Mejorar el dashboard con nuevas visualizaciones y métricas.
+Incorporar nuevas métricas e indicadores de rendimiento futbolístico.
+
+Ampliar el análisis a más partidos y temporadas.
+
+Documentar las transformaciones aplicadas a los datos.
+
+Mejorar la configuración del proyecto para facilitar su ejecución en otros equipos.
 
 👨‍💻 Autor
 
-Proyecto personal de aprendizaje y desarrollo de competencias en análisis de datos, Python y Business Intelligence.
-
-Este trabajo forma parte de mi aprendizaje práctico en análisis exploratorio de datos y visualización.
-
-Tecnologías: Python · Pandas · NumPy · Matplotlib · Jupyter Notebook · Power BI · Git · GitHub
+Proyecto personal de aprendizaje y desarrollo de competencias en análisis de datos, Python, procesamiento de datos y Business Intelligence.
