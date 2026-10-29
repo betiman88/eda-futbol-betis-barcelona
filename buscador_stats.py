@@ -3,403 +3,554 @@ import json
 import os
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 import pandas as pd
 import requests
+from pywinauto import Desktop
 
 
 # ============================================================
-# 1. CONFIGURACIÓN
+# CONFIGURACIÓN DE RUTAS
 # ============================================================
+
+BASE_DIR = Path(__file__).resolve().parent
+
+CARPETA_RAW = BASE_DIR / "data" / "raw"
+CARPETA_PROCESSED = BASE_DIR / "data" / "processed"
+
+SCRIPT_PREPARAR = BASE_DIR / "src" / "prepare_match.py"
+ARCHIVO_POWERBI = BASE_DIR / "Dashboard Barcelona-Betis.pbix"
 
 URL_COMPETICIONES = (
-    "https://raw.githubusercontent.com/statsbomb/"
-    "open-data/master/data/competitions.json"
+    "https://raw.githubusercontent.com/"
+    "statsbomb/open-data/master/data/competitions.json"
 )
 
-URL_BASE = (
-    "https://raw.githubusercontent.com/statsbomb/"
-    "open-data/master/data"
+URL_BASE_PARTIDOS = (
+    "https://raw.githubusercontent.com/"
+    "statsbomb/open-data/master/data/matches"
 )
 
-# Raíz del proyecto
-CARPETA_PROYECTO = Path(__file__).resolve().parent
-
-# Carpetas de datos
-CARPETA_RAW = CARPETA_PROYECTO / "data" / "raw"
-CARPETA_PROCESADOS = CARPETA_PROYECTO / "data" / "processed"
-
-# Script de preparación
-SCRIPT_PREPARAR = (
-    CARPETA_PROYECTO / "src" / "prepare_match.py"
+URL_BASE_EVENTOS = (
+    "https://raw.githubusercontent.com/"
+    "statsbomb/open-data/master/data/events"
 )
 
-# Informe de Power BI
-ARCHIVO_POWERBI = (
-    CARPETA_PROYECTO / "Dashboard Barcelona-Betis.pbix"
-)
-
-TIMEOUT = 60
+CARPETA_RAW.mkdir(parents=True, exist_ok=True)
+CARPETA_PROCESSED.mkdir(parents=True, exist_ok=True)
 
 
 # ============================================================
-# 2. SELECCIÓN DE OPCIONES
+# FUNCIONES AUXILIARES
 # ============================================================
 
-def seleccionar_opcion(datos, columna_nombre, columna_id, mensaje):
-    """Muestra opciones numeradas y devuelve la seleccionada."""
+def obtener_json(url):
+    """Descarga un JSON y devuelve su contenido."""
+    respuesta = requests.get(url, timeout=60)
+    respuesta.raise_for_status()
+    return respuesta.json()
 
-    if datos.empty:
-        raise ValueError("No hay opciones disponibles.")
 
-    for i, (_, fila) in enumerate(datos.iterrows(), start=1):
-        print(
-            f"{i}. {fila[columna_nombre]} "
-            f"(ID: {fila[columna_id]})"
-        )
+def seleccionar_opcion(df, columna, mensaje):
+    """Muestra opciones numeradas y devuelve la fila seleccionada."""
+    df = df.reset_index(drop=True)
+
+    print(f"\n{mensaje}")
+
+    for i, valor in enumerate(df[columna].tolist(), start=1):
+        print(f"{i}. {valor}")
 
     while True:
         try:
-            seleccion = int(input(mensaje))
+            opcion = int(input("\nSelecciona una opción: "))
 
-            if 1 <= seleccion <= len(datos):
-                return datos.iloc[seleccion - 1]
+            if 1 <= opcion <= len(df):
+                return df.iloc[opcion - 1]
 
-            print(f"Introduce un número entre 1 y {len(datos)}.")
+            print("Número fuera de rango.")
 
         except ValueError:
-            print("Introduce un número entero válido.")
+            print("Introduce un número válido.")
 
 
 # ============================================================
-# 3. CARGAR COMPETICIONES Y TEMPORADAS
+# SELECCIÓN DE COMPETICIÓN, TEMPORADA Y PARTIDO
 # ============================================================
 
-def cargar_competiciones():
-    """Descarga el catálogo de StatsBomb."""
+def seleccionar_partido():
+    """Permite seleccionar competición, temporada y partido."""
 
-    respuesta = requests.get(
-        URL_COMPETICIONES,
-        timeout=TIMEOUT
-    )
-    respuesta.raise_for_status()
+    print("\nDescargando lista de competiciones de StatsBomb...")
+    competiciones = obtener_json(URL_COMPETICIONES)
 
-    return pd.DataFrame(respuesta.json())
+    df_competiciones = pd.DataFrame(competiciones)
 
-
-def elegir_competicion_y_temporada(df):
-    """Permite elegir una competición y una temporada."""
-
-    competiciones = (
-        df[["competition_id", "competition_name"]]
-        .drop_duplicates()
-        .sort_values("competition_name")
-        .reset_index(drop=True)
-        .rename(columns={
-            "competition_id": "id",
-            "competition_name": "nombre"
-        })
-    )
-
-    print("\n=== COMPETICIONES DISPONIBLES ===")
-
-    competicion = seleccionar_opcion(
-        competiciones,
-        "nombre",
-        "id",
-        "\nSelecciona una competición: "
-    )
-
-    temporadas = (
-        df.loc[
-            df["competition_id"] == competicion["id"],
-            ["season_id", "season_name"]
+    df_competiciones = (
+        df_competiciones[
+            ["competition_id", "competition_name"]
         ]
         .drop_duplicates()
-        .sort_values("season_name", ascending=False)
+        .sort_values(
+            ["competition_name", "competition_id"]
+        )
         .reset_index(drop=True)
-        .rename(columns={
-            "season_id": "id",
-            "season_name": "nombre"
-        })
     )
 
-    print(f"\n=== TEMPORADAS DE {competicion['nombre']} ===")
+    competicion = seleccionar_opcion(
+        df_competiciones,
+        "competition_name",
+        "COMPETICIONES DISPONIBLES"
+    )
+
+    competition_id = int(competicion["competition_id"])
+    competition_name = competicion["competition_name"]
+
+    temporadas = pd.DataFrame(competiciones)
+
+    temporadas = temporadas[
+        temporadas["competition_id"] == competition_id
+    ][["season_id", "season_name"]].drop_duplicates()
+
+    temporadas = temporadas.sort_values(
+        "season_name"
+    ).reset_index(drop=True)
 
     temporada = seleccionar_opcion(
         temporadas,
-        "nombre",
-        "id",
-        "\nSelecciona una temporada: "
+        "season_name",
+        f"TEMPORADAS DE {competition_name}"
     )
 
-    return competicion, temporada
+    season_id = int(temporada["season_id"])
+    season_name = temporada["season_name"]
 
-
-# ============================================================
-# 4. CARGAR PARTIDOS
-# ============================================================
-
-def cargar_partidos(competition_id, season_id):
-    """Descarga los partidos de la temporada seleccionada."""
-
-    url = (
-        f"{URL_BASE}/matches/"
+    url_partidos = (
+        f"{URL_BASE_PARTIDOS}/"
         f"{competition_id}/{season_id}.json"
     )
 
-    print("\nDescargando partidos...")
+    print("\nDescargando lista de partidos...")
+    partidos = obtener_json(url_partidos)
 
-    respuesta = requests.get(url, timeout=TIMEOUT)
-    respuesta.raise_for_status()
+    if not partidos:
+        raise RuntimeError(
+            "No se han encontrado partidos para esa temporada."
+        )
 
-    return pd.json_normalize(respuesta.json(), sep="_")
+    df_partidos = pd.json_normalize(partidos)
 
-
-# ============================================================
-# 5. ELEGIR PARTIDO
-# ============================================================
-
-def elegir_partido(partidos):
-    """Muestra los partidos y permite seleccionar uno."""
-
-    if partidos.empty:
-        return None
-
-    columnas = [
+    columnas_necesarias = [
         "match_id",
         "match_date",
-        "home_team_home_team_name",
-        "away_team_away_team_name",
-        "home_score",
-        "away_score"
+        "home_team.home_team_name",
+        "away_team.away_team_name",
     ]
 
     faltantes = [
-        columna for columna in columnas
-        if columna not in partidos.columns
+        columna
+        for columna in columnas_necesarias
+        if columna not in df_partidos.columns
     ]
 
     if faltantes:
-        raise ValueError(
-            f"Faltan columnas en los partidos: {faltantes}"
+        raise RuntimeError(
+            "La respuesta de StatsBomb no contiene las columnas: "
+            + ", ".join(faltantes)
         )
 
-    partidos = (
-        partidos[columnas]
-        .sort_values("match_date")
-        .reset_index(drop=True)
+    df_partidos = df_partidos[columnas_necesarias].copy()
+
+    df_partidos = df_partidos.sort_values(
+        "match_date",
+        ascending=False
+    ).reset_index(drop=True)
+
+    df_partidos["partido"] = (
+        df_partidos["home_team.home_team_name"]
+        + " - "
+        + df_partidos["away_team.away_team_name"]
+        + " | "
+        + df_partidos["match_date"].astype(str)
     )
 
-    partidos["nombre"] = partidos.apply(
-        lambda fila: (
-            f"{fila['match_date']} | "
-            f"{fila['home_team_home_team_name']} - "
-            f"{fila['away_team_away_team_name']} | "
-            f"{fila['home_score']} - {fila['away_score']}"
+    partido = seleccionar_opcion(
+        df_partidos,
+        "partido",
+        f"PARTIDOS DE {competition_name} - {season_name}"
+    )
+
+    return {
+        "competition_id": competition_id,
+        "competition_name": competition_name,
+        "season_id": season_id,
+        "season_name": season_name,
+        "match_id": int(partido["match_id"]),
+        "match_date": str(partido["match_date"]),
+        "home_team": str(
+            partido["home_team.home_team_name"]
         ),
-        axis=1
-    )
-
-    partidos["id"] = partidos["match_id"]
-
-    print(f"\n=== PARTIDOS DISPONIBLES: {len(partidos)} ===")
-
-    return seleccionar_opcion(
-        partidos,
-        "nombre",
-        "id",
-        "\nSelecciona un partido: "
-    )
+        "away_team": str(
+            partido["away_team.away_team_name"]
+        ),
+    }
 
 
 # ============================================================
-# 6. MOSTRAR PARTIDO
+# DESCARGA DE EVENTOS Y METADATOS
 # ============================================================
 
-def mostrar_resultado(partido):
-    """Muestra la información del encuentro seleccionado."""
+def descargar_partido(datos):
+    """Descarga los eventos y guarda los metadatos del partido."""
 
-    print("\n=== PARTIDO SELECCIONADO ===")
-    print("Fecha:", partido["match_date"])
-    print(
-        "Encuentro:",
-        partido["home_team_home_team_name"],
-        "-",
-        partido["away_team_away_team_name"]
-    )
-    print(
-        "Resultado:",
-        partido["home_score"],
-        "-",
-        partido["away_score"]
-    )
-    print("Match ID:", int(partido["match_id"]))
+    match_id = datos["match_id"]
 
+    url_eventos = f"{URL_BASE_EVENTOS}/{match_id}.json"
 
-# ============================================================
-# 7. DESCARGAR JSON DEL PARTIDO
-# ============================================================
+    print(f"\nDescargando eventos del partido {match_id}...")
 
-def descargar_partido(match_id):
-    """Descarga y guarda el JSON original en data/raw."""
+    eventos = obtener_json(url_eventos)
 
-    url = f"{URL_BASE}/events/{match_id}.json"
+    archivo_eventos = CARPETA_RAW / f"{match_id}.json"
 
-    print("\nDescargando eventos del partido...")
-
-    respuesta = requests.get(url, timeout=TIMEOUT)
-    respuesta.raise_for_status()
-
-    datos = respuesta.json()
-
-    if not datos:
-        raise ValueError(
-            "El partido no contiene eventos disponibles."
+    with open(archivo_eventos, "w", encoding="utf-8") as archivo:
+        json.dump(
+            eventos,
+            archivo,
+            ensure_ascii=False,
+            indent=2
         )
 
-    CARPETA_RAW.mkdir(parents=True, exist_ok=True)
+    print(f"Eventos guardados en:\n{archivo_eventos}")
+    print(f"Número de eventos descargados: {len(eventos)}")
 
-    ruta_json = CARPETA_RAW / f"{match_id}.json"
+    archivo_metadata = (
+        CARPETA_PROCESSED / "partido_actual.json"
+    )
 
-    with open(ruta_json, "w", encoding="utf-8") as archivo:
-        json.dump(datos, archivo, ensure_ascii=False)
+    with open(archivo_metadata, "w", encoding="utf-8") as archivo:
+        json.dump(
+            datos,
+            archivo,
+            ensure_ascii=False,
+            indent=2
+        )
 
-    print(f"Eventos descargados: {len(datos)}")
-    print(f"JSON guardado en: {ruta_json}")
-
-    return ruta_json
+    print(f"Metadatos guardados en:\n{archivo_metadata}")
 
 
 # ============================================================
-# 8. PREPARAR CSV PARA POWER BI
+# GENERAR LOS CSV PARA POWER BI
 # ============================================================
 
-def preparar_datos_powerbi(match_id):
-    """Ejecuta prepare_match.py con el ID elegido."""
+def preparar_datos(match_id):
+    """Ejecuta prepare_match.py para generar los CSV."""
 
     if not SCRIPT_PREPARAR.exists():
         raise FileNotFoundError(
-            f"No se encuentra el script: {SCRIPT_PREPARAR}"
+            f"No encuentro el script:\n{SCRIPT_PREPARAR}"
         )
 
-    print("\nGenerando los CSV para Power BI...")
+    print("\nPreparando los datos para Power BI...")
 
-    subprocess.run(
+    resultado = subprocess.run(
         [
             sys.executable,
             str(SCRIPT_PREPARAR),
             str(match_id)
         ],
-        cwd=str(CARPETA_PROYECTO),
+        cwd=str(BASE_DIR),
         check=True
     )
 
-    csv_eventos = (
-        CARPETA_PROCESADOS / "eventos_partido.csv"
+    archivo_eventos = (
+        CARPETA_PROCESSED / "eventos_partido.csv"
     )
-    csv_tiros = (
-        CARPETA_PROCESADOS / "tiros_partido.csv"
+    archivo_tiros = (
+        CARPETA_PROCESSED / "tiros_partido.csv"
     )
 
-    if not csv_eventos.exists() or not csv_tiros.exists():
+    if not archivo_eventos.exists():
         raise FileNotFoundError(
-            "No se han encontrado los dos CSV esperados."
+            f"No se ha generado:\n{archivo_eventos}"
+        )
+
+    if not archivo_tiros.exists():
+        raise FileNotFoundError(
+            f"No se ha generado:\n{archivo_tiros}"
         )
 
     print("\nCSV generados correctamente:")
-    print(csv_eventos)
-    print(csv_tiros)
+    print(f"- {archivo_eventos}")
+    print(f"- {archivo_tiros}")
+
+    return resultado
 
 
 # ============================================================
-# 9. ABRIR POWER BI
+# CONTROL DE POWER BI
 # ============================================================
 
-def abrir_powerbi():
-    """Abre el archivo PBIX con la aplicación asociada en Windows."""
+def ventanas_powerbi():
+    """Devuelve las ventanas de Power BI Desktop detectadas."""
 
-    if not ARCHIVO_POWERBI.exists():
-        raise FileNotFoundError(
-            f"No se encuentra el informe: {ARCHIVO_POWERBI}"
-        )
-
-    print("\nAbriendo el informe de Power BI...")
-    os.startfile(str(ARCHIVO_POWERBI))
-
-
-# ============================================================
-# 10. PROCESAR PARTIDO COMPLETO
-# ============================================================
-
-def procesar_partido(match_id):
-    """
-    Coordina descarga, transformación y apertura del informe.
-    Esta función también podrá reutilizarse desde la futura GUI.
-    """
-
-    descargar_partido(match_id)
-    preparar_datos_powerbi(match_id)
-    abrir_powerbi()
-
-
-# ============================================================
-# 11. PROGRAMA PRINCIPAL
-# ============================================================
-
-def main():
-    """Ejecuta el buscador desde la terminal."""
+    ventanas = []
 
     try:
-        df = cargar_competiciones()
+        escritorio = Desktop(backend="uia")
 
-        competicion, temporada = (
-            elegir_competicion_y_temporada(df)
-        )
+        for ventana in escritorio.windows():
+            try:
+                titulo = ventana.window_text().strip()
 
-        partidos = cargar_partidos(
-            competicion["id"],
-            temporada["id"]
-        )
+                if "power bi desktop" in titulo.lower():
+                    ventanas.append(ventana)
 
-        if partidos.empty:
-            print("No hay partidos disponibles.")
-            return
+            except Exception:
+                continue
 
-        partido = elegir_partido(partidos)
+    except Exception as error:
+        print(f"Aviso al buscar ventanas: {error}")
 
-        if partido is None:
-            print("No se ha seleccionado ningún partido.")
-            return
+    return ventanas
 
-        mostrar_resultado(partido)
 
-        match_id = int(partido["match_id"])
+def abrir_powerbi():
+    """Abre el informe si es necesario y espera a que cargue."""
 
-        procesar_partido(match_id)
+    print("\nComprobando Power BI Desktop...")
 
+    ventanas = ventanas_powerbi()
+
+    if ventanas:
+        print("Power BI ya está abierto.")
+        ventana = ventanas[0]
+    else:
+        if not ARCHIVO_POWERBI.exists():
+            raise FileNotFoundError(
+                f"No encuentro el informe Power BI:\n"
+                f"{ARCHIVO_POWERBI}"
+            )
+
+        print("Abriendo el informe de Power BI...")
+        os.startfile(str(ARCHIVO_POWERBI))
+
+        ventana = None
+        limite = time.time() + 180
+
+        while time.time() < limite:
+            time.sleep(3)
+            ventanas = ventanas_powerbi()
+
+            if ventanas:
+                ventana = ventanas[0]
+                break
+
+        if ventana is None:
+            raise RuntimeError(
+                "Power BI no ha aparecido en las ventanas "
+                "detectadas en 180 segundos. Comprueba si se "
+                "ha abierto o si muestra algún diálogo."
+            )
+
+    # Dar tiempo a que el informe termine de cargarse.
+    try:
+        ventana.set_focus()
+    except Exception:
+        pass
+
+    print("Ventana detectada:")
+    print(f"- {ventana.window_text()}")
+
+    time.sleep(10)
+
+    # Buscar de nuevo por si cambió el título al cargar.
+    ventanas = ventanas_powerbi()
+
+    if ventanas:
+        ventana = ventanas[0]
+
+    return ventana
+
+
+def buscar_boton_actualizar(ventana):
+    """
+    Busca Actualizar recorriendo todos los controles accesibles.
+    No depende únicamente de que el control sea tipo Button.
+    """
+
+    candidatos = []
+
+    try:
+        controles = ventana.descendants()
+    except Exception:
+        controles = []
+
+    for control in controles:
+        try:
+            nombre = control.window_text().strip().lower()
+
+            if (
+                nombre == "actualizar"
+                or nombre == "refresh"
+                or nombre.startswith("actualizar ")
+                or nombre.startswith("refresh ")
+            ):
+                candidatos.append(control)
+
+        except Exception:
+            continue
+
+    return candidatos
+
+
+def actualizar_powerbi(ventana):
+    """Pulsa Actualizar y espera a que Power BI procese los datos."""
+
+    print("\nBuscando el control Actualizar...")
+
+    try:
+        ventana.set_focus()
+        time.sleep(2)
+    except Exception as error:
+        print(f"Aviso al activar la ventana: {error}")
+
+    botones = buscar_boton_actualizar(ventana)
+
+    if not botones:
         print(
-            "\nProceso finalizado. "
-            "Si el informe ya estaba abierto, "
-            "puede ser necesario actualizarlo."
+            "\nNo se ha encontrado el control Actualizar "
+            "por su nombre exacto."
         )
+
+        print("\nControles visibles que contienen 'actualizar' "
+              "o 'refresh':")
+
+        try:
+            for control in ventana.descendants():
+                try:
+                    nombre = control.window_text().strip()
+
+                    if (
+                        "actualizar" in nombre.lower()
+                        or "refresh" in nombre.lower()
+                    ):
+                        print(
+                            f"- Texto: {nombre!r} | "
+                            f"Tipo: {control.friendly_class_name()}"
+                        )
+                except Exception:
+                    continue
+        except Exception:
+            pass
+
+        raise RuntimeError(
+            "No se ha podido localizar el control Actualizar. "
+            "El informe está abierto, pero no se ha confirmado "
+            "la actualización automática."
+        )
+
+    for i, boton in enumerate(botones, start=1):
+        try:
+            print(
+                f"Control {i}: "
+                f"texto={boton.window_text()!r}, "
+                f"tipo={boton.friendly_class_name()}"
+            )
+        except Exception:
+            pass
+
+    # Intentar pulsar el primer control encontrado.
+    boton = botones[0]
+
+    try:
+        boton.click_input()
+    except Exception as error:
+        raise RuntimeError(
+            "Se encontró el control Actualizar, pero no se "
+            "pudo pulsar automáticamente."
+        ) from error
+
+    print("\nSe ha enviado el clic al control Actualizar.")
+    print("Esperando a que Power BI actualice los datos...")
+
+    time.sleep(15)
+
+    print(
+        "\nRevisa el informe para confirmar que aparecen "
+        "los datos del partido seleccionado y que no hay "
+        "mensajes de error."
+    )
+
+
+# ============================================================
+# PROCESO PRINCIPAL
+# ============================================================
+
+def procesar_partido(datos):
+    """Ejecuta todo el flujo para el partido seleccionado."""
+
+    descargar_partido(datos)
+
+    preparar_datos(datos["match_id"])
+
+    ventana = abrir_powerbi()
+
+    actualizar_powerbi(ventana)
+
+
+def main():
+    print("=" * 60)
+    print("BUSCADOR DE PARTIDOS - STATSBOMB OPEN DATA")
+    print("=" * 60)
+
+    try:
+        datos = seleccionar_partido()
+
+        print("\nPARTIDO SELECCIONADO")
+        print("-" * 40)
+        print(f"Competición: {datos['competition_name']}")
+        print(f"Temporada:   {datos['season_name']}")
+        print(f"Fecha:       {datos['match_date']}")
+        print(
+            f"Partido:     {datos['home_team']} - "
+            f"{datos['away_team']}"
+        )
+        print(f"Match ID:    {datos['match_id']}")
+
+        confirmar = input(
+            "\n¿Quieres descargar y cargar este partido? (s/n): "
+        ).strip().lower()
+
+        if confirmar not in ("s", "si", "sí", "y", "yes"):
+            print("Operación cancelada.")
+            return
+
+        procesar_partido(datos)
+
+        print("\n" + "=" * 60)
+        print("PROCESO FINALIZADO")
+        print("=" * 60)
+
+    except KeyboardInterrupt:
+        print("\nOperación cancelada por el usuario.")
 
     except requests.RequestException as error:
-        print(f"\nError de conexión o descarga: {error}")
+        print(
+            "\nError al conectar con StatsBomb o GitHub:\n"
+            f"{error}"
+        )
 
     except subprocess.CalledProcessError as error:
         print(
-            "\nError al preparar los datos. "
+            "\nHa fallado la preparación de los CSV.\n"
             f"Código de salida: {error.returncode}"
         )
 
-    except (
-        KeyError,
-        ValueError,
-        FileNotFoundError
-    ) as error:
-        print(f"\nError durante la ejecución: {error}")
+    except Exception as error:
+        print(f"\nERROR: {error}")
+        raise
 
 
 if __name__ == "__main__":

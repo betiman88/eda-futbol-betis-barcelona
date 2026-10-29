@@ -1,25 +1,24 @@
 ﻿id,index,periodo,minuto,segundo,equipo,jugador,xg,resultado,parte_cuerpo,tipo_tiro,tecnica,primer_toque,mano_a_mano,shot_x,shot_y,end_x,end_y
-4f1d0d52-a7fe-4e3a-a7d9-9cb2382d8a2d,369,1,6,46,Barcelona,Pedro González López,0.54601175,Saved,Right Foot,Open Play,Half Volley,True,,112.2,39.9,119.5,39.9
-90c7e913-dfd1-4694-ab97-8b111f068f90,430,1,8,44,Barcelona,Lionel Andrés Messi Cuccittini,0.08631221,Off T,Left Foot,Open Play,Half Volley,True,,115.6,49.8,120.0,47.3
-c57e5afa-ca8f-40d2-89e1-c1073d53776a,656,1,12,49,Barcelona,Ousmane Dembélé,0.010357936,Off T,Right Foot,Open Play,Normal,,,102.5,18.5,120.0,39.7
-6d113c24-a012-406d-ac54-64b92ce3ae06,923,1,18,10,Barcelona,Ousmane Dembélé,0.11706126,Blocked,Right Foot,Open Play,Half Volley,True,,104.9,39.7,112.3,40.5
-f6b05684-ff92-4669-a204-a478918fce06,1031,1,20,47,Barcelona,Pedro González López,0.3090264,Off T,Head,Open Play,Normal,,True,114.6,41.0,120.0,40.2
-4b771d62-6af7-4627-89ae-7b188fc8d28c,1178,1,24,27,Barcelona,Jordi Alba Ramos,0.05799438,Off T,Left Foot,Open Play,Volley,True,,110.2,26.8,120.0,35.4
-610717f2-172b-4805-900c-8c3a4722c086,1299,1,26,35,Barcelona,Frenkie de Jong,0.27720144,Goal,Right Foot,Open Play,Normal,True,,115.4,41.1,120.0,42.5
-48643306-b3b4-43ba-af49-4b71b1fe4f55,1488,1,30,13,Barcelona,Martin Braithwaite Christensen,0.08235023,Blocked,Left Foot,Open Play,Normal,,,113.8,46.1,114.6,45.4
-9523a6ba-9018-446a-81d5-7cffaa6f8328,1517,1,30,34,Barcelona,Lionel Andrés Messi Cuccittini,0.025608072,Blocked,Left Foot,Open Play,Normal,,,99.5,55.6,102.8,51.7
-c3cf9090-4e98-4875-93df-5e4140cffbda,1526,1,31,24,Barcelona,Lionel Andrés Messi Cuccittini,0.045421854,Off T,Left Foot,Open Play,Normal,,,96.5,34.7,120.0,33.4
-535f66a7-fb0b-4b45-a4db-a060406f76da,1877,1,37,24,Barcelona,Ousmane Dembélé,0.14145768,Saved,Right Foot,Open Play,Normal,,,108.5,33.6,109.4,33.8
-8ea42efb-3009-4dee-b0c8-16a5df34f0fe,1947,1,40,51,Barcelona,Lionel Andrés Messi Cuccittini,0.07923236,Saved,Left Foot,Free Kick,Normal,,,96.2,34.8,120.0,37.4
-e101dfee-dcc1-4f0e-8e3a-4d49e62f7183,1957,1,42,15,Barcelona,Lionel Andrés Messi Cuccittini,0.046973187,Off T,Right Foot,Free Kick,Normal,,,98.4,55.7,120.0,42.2
-258b89ad-2944-47c1-ad5a-5f50afbb2c59,2385,2,50,35,Barcelona,Lionel Andrés Messi Cuccittini,0.07536486,Off T,Left Foot,Open Play,Normal,True,,101.2,44.8,120.0,32.8
-51ea06ac-ac75-42ee-bc0c-337cde8120c9,2663,2,56,7,Barcelona,Ousmane Dembélé,0.05796124,Blocked,Left Foot,Open Play,Lob,True,,108.0,24.9,117.0,36.9
-9ecc3394-0084-488b-9c7c-b672be0b18d6,2837,2,59,9,Barcelona,Lionel Andrés Messi Cuccittini,0.060821835,Off T,Left Foot,Open Play,Normal,,,100.4,39.4,120.0,34.8
-9e71bc3d-a9ef-4e5a-b633-87984f29f8d5,2952,2,62,20,Huesca,Rafael Mir Vicente,0.28106615,Saved,Right Foot,Open Play,Backheel,True,,118.0,44.2,119.2,42.5
-62c94907-b2a8-48ad-92fb-37d425eca4ce,3132,2,66,23,Barcelona,Ousmane Dembélé,0.022451427,Off T,Right Foot,Open Play,Normal,,,94.6,26.4,120.0,48.1
-8d97fb0b-54ef-49c7-ad57-abb64c9c58dc,3191,2,67,50,Barcelona,Lionel Andrés Messi Cuccittini,0.13316546,Saved,Left Foot,Open Play,Normal,,,113.4,28.3,119.2,36.2
-2d2e0d66-30b6-45d6-ba04-231adb623699,3433,2,72,34,Huesca,Javier Ontiveros Parra,0.022933368,Saved,Right Foot,Open Play,Normal,,,93.7,29.1,116.6,38.6
-8c83395e-627b-4596-9d0b-14e920f2d1ab,3615,2,76,16,Barcelona,Miralem Pjanić,0.05382589,Off T,Right Foot,Open Play,Normal,True,,97.6,44.3,120.0,43.7
-19af9bf2-bf85-404d-93ed-9a092607f070,3628,2,76,42,Barcelona,Ousmane Dembélé,0.28016123,Saved,Left Foot,Open Play,Normal,,,110.4,31.3,110.9,31.9
-9803c7f9-ba4e-4c55-b464-5378253d74b3,3949,2,84,27,Huesca,Shinji Okazaki,0.032397743,Saved,Head,Open Play,Normal,,,103.6,32.7,117.6,37.0
-4c8a9b35-6551-40a1-b592-40659c0f0518,4024,2,87,4,Huesca,Juan Carlos Real Ruiz,0.051326882,Saved,Left Foot,Open Play,Half Volley,,,105.8,35.2,118.5,38.0
+bd4cb5bb-0f9e-4369-b46d-838db5e292b7,95,1,2,9,Napoli,Antônio de Oliveira Filho,0.038571585,Off T,Head,Open Play,Normal,,,105.9,42.6,120.0,36.5
+738ada63-bd3d-46cf-b6ab-09c55d8d44a3,304,1,6,51,Napoli,Antônio de Oliveira Filho,0.04537675,Saved,Right Foot,Open Play,Normal,,,110.5,53.6,119.2,42.9
+ac3e65bc-16b5-465b-9c69-878cfec0814f,346,1,8,7,Bayern Munich,Hansi Flick,0.03726729,Off T,Right Foot,Open Play,Half Volley,,,99.2,41.7,119.9,46.2
+ffc72bec-0510-48e6-8506-c49fc4268428,515,1,13,30,Bayern Munich,Norbert Nachtweih,0.02461278,Off T,Left Foot,Open Play,Normal,,,93.4,50.6,120.0,46.2
+464962c1-970c-4716-abc5-ec2f7124a563,611,1,17,37,Bayern Munich,Klaus Augenthaler,0.01151364,Saved,Right Foot,Open Play,Normal,,,83.9,39.7,117.5,41.4
+d9d0a839-1359-491e-bb22-525b3da462f8,674,1,19,25,Napoli,Alessandro Renica,0.005847379,Blocked,Left Foot,Open Play,Normal,True,,78.6,48.3,104.2,44.7
+01ba6ccc-7e46-41d1-8799-5f7259ed3377,733,1,21,27,Napoli,Diego Armando Maradona,0.07544509,Off T,Left Foot,Free Kick,Normal,,,97.2,43.6,119.9,42.5
+16755e2e-c5d3-4eee-b7a0-4269fab54e75,764,1,22,43,Bayern Munich,Ludwig Kögl,0.024794754,Off T,Right Foot,Open Play,Half Volley,True,,99.7,26.7,120.0,42.8
+79b19269-bf9b-4a23-8661-7c52c0715a3d,805,1,23,49,Bayern Munich,Olaf Thon,0.10013943,Saved,Right Foot,Open Play,Half Volley,True,,110.9,34.8,118.6,39.3
+4c1128cd-fd4b-4786-85be-8c5cb6220b19,809,1,23,51,Bayern Munich,Hansi Flick,0.055954766,Wayward,Right Foot,Open Play,Half Volley,True,,105.6,47.7,113.9,42.2
+6e662de0-2e2c-474d-af0e-d82363489e76,1309,1,40,13,Napoli,Antônio de Oliveira Filho,0.37119305,Goal,Right Foot,Open Play,Normal,,,106.5,44.4,120.0,39.7
+c9fc2a4e-3e4f-48af-aa9f-e036788d8a5f,1373,1,42,19,Napoli,Diego Armando Maradona,0.02558251,Off T,Left Foot,Open Play,Volley,True,,99.5,57.2,120.0,31.9
+b3b8769a-88fa-4f3e-b937-ba07ebe52572,1533,2,46,38,Bayern Munich,Klaus Augenthaler,0.026470983,Blocked,Right Foot,Open Play,Normal,True,,97.8,26.5,103.9,28.8
+1e99c3de-f46c-4792-a2de-5b7d05fa50c2,1647,2,50,10,Napoli,Andrea Carnevale,0.20968819,Saved,Right Foot,Open Play,Normal,,True,118.7,33.7,119.1,36.4
+abbb585f-80f5-44d2-b585-9f747d0cadfc,1705,2,51,33,Napoli,Fernando De Napoli,0.07081035,Saved,Left Foot,Open Play,Normal,,,95.2,34.4,114.8,40.0
+8e742005-484b-4f16-9352-8673e68131ad,1759,2,53,1,Bayern Munich,Ludwig Kögl,0.2592303,Off T,Left Foot,Open Play,Lob,,True,115.4,30.2,120.0,40.9
+dd3ca605-9f96-48dd-bc56-930d4ccd47b3,1848,2,56,1,Napoli,Andrea Carnevale,0.16322818,Post,Head,Open Play,Diving Header,,,112.3,35.8,120.0,36.1
+da078f75-1733-4f2e-8c27-3fb403ac951d,1879,2,57,3,Bayern Munich,Olaf Thon,0.05029058,Blocked,Right Foot,Open Play,Volley,True,,102.9,38.8,104.8,39.4
+ba6a010a-4900-4eca-bbb4-679c15d63fae,1945,2,59,35,Napoli,Andrea Carnevale,0.118364796,Goal,Head,Open Play,Normal,,,112.7,39.7,120.0,37.4
+b84b73c4-ee54-4259-986b-ca49cf87ac56,2072,2,63,32,Napoli,Ricardo Rogério de Brito,0.029285189,Blocked,Left Foot,Open Play,Normal,True,,96.6,29.7,104.7,33.1
+3c40c4c3-f095-4162-aba2-9cccac841a89,2244,2,68,0,Bayern Munich,Ludwig Kögl,0.0358949,Off T,Right Foot,Open Play,Normal,,,104.4,23.2,120.0,36.7
+2a00d5ee-1ae9-4bd5-a033-6078ede7b36a,2667,2,83,38,Napoli,Andrea Carnevale,0.076939665,Off T,Left Foot,Open Play,Normal,,,103.7,47.6,120.0,47.1
+c9b956c3-3ba6-43e1-a1de-76c570486bc3,2847,2,89,57,Bayern Munich,Hans Dorfner,0.012285785,Blocked,Right Foot,Open Play,Normal,,,88.4,51.7,94.3,49.7

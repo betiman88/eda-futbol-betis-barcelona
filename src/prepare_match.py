@@ -6,14 +6,15 @@ from pathlib import Path
 import pandas as pd
 
 
-# ==================================================
-# 1. CONFIGURACIÓN Y CARGA DE LOS DATOS
-# ==================================================
+# ============================================================
+# 1. CONFIGURACIÓN Y CARGA DE DATOS
+# ============================================================
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 
-# Recibir el ID como argumento.
-# Si no se proporciona, utilizar el partido original.
+# Recibir el ID desde buscador_stats.py.
+# Si se ejecuta manualmente sin argumentos, usar el partido
+# de ejemplo original.
 MATCH_ID = sys.argv[1] if len(sys.argv) > 1 else "3773631"
 
 JSON_PATH = PROJECT_DIR / "data" / "raw" / f"{MATCH_ID}.json"
@@ -29,59 +30,82 @@ with open(JSON_PATH, "r", encoding="utf-8") as file:
 
 if not events:
     raise ValueError(
-        f"El archivo del partido {MATCH_ID} no contiene eventos."
+        f"El partido {MATCH_ID} no contiene eventos."
     )
 
 df = pd.json_normalize(events, sep=".")
 
-print("=" * 50)
+print("=" * 60)
 print(f"ANÁLISIS DEL PARTIDO: ID {MATCH_ID}")
-print("=" * 50)
+print("=" * 60)
 
 print(f"\nNúmero de eventos: {df.shape[0]}")
 print(f"Número de columnas: {df.shape[1]}")
 
 columnas_diagnostico = [
-    "minute", "type.name", "team.name", "player.name"
+    "minute",
+    "type.name",
+    "team.name",
+    "player.name",
 ]
 columnas_diagnostico = [
-    col for col in columnas_diagnostico if col in df.columns
+    columna for columna in columnas_diagnostico
+    if columna in df.columns
 ]
 
 print("\nPrimeros 5 eventos:")
 print(df[columnas_diagnostico].head())
 
-print("\nValores nulos: las 15 columnas con más nulos")
-print(df.isna().sum().sort_values(ascending=False).head(15))
+print("\nColumnas con más valores nulos:")
+print(
+    df.isna()
+    .sum()
+    .sort_values(ascending=False)
+    .head(15)
+)
 
 
-# ==================================================
+# ============================================================
 # 2. AUDITORÍA DE EVENTOS
-# ==================================================
+# ============================================================
 
-print("\n" + "=" * 50)
-print("AUDITORÍA DE LOS EVENTOS")
-print("=" * 50)
+print("\n" + "=" * 60)
+print("AUDITORÍA DE EVENTOS")
+print("=" * 60)
 
 if "type.name" in df.columns:
     print("\nEventos por tipo:")
-    print(df["type.name"].value_counts(dropna=False).to_string())
+    print(
+        df["type.name"]
+        .value_counts(dropna=False)
+        .to_string()
+    )
 
 if "team.name" in df.columns:
     print("\nEventos por equipo:")
-    print(df["team.name"].value_counts(dropna=False).to_string())
+    print(
+        df["team.name"]
+        .value_counts(dropna=False)
+        .to_string()
+    )
 
 
-# ==================================================
+# ============================================================
 # 3. ANÁLISIS DE LOS TIROS
-# ==================================================
+# ============================================================
 
 if "type.name" not in df.columns:
-    raise ValueError("No se encuentra la columna 'type.name'.")
+    raise ValueError(
+        "El JSON no contiene la columna 'type.name'."
+    )
 
 shots = df[df["type.name"] == "Shot"].copy()
 
-print("\nNúmero total de tiros:", len(shots))
+print("\n" + "=" * 60)
+print("ANÁLISIS DE TIROS")
+print("=" * 60)
+
+print(f"\nNúmero total de tiros: {len(shots)}")
 
 if "team.name" in shots.columns:
     print("\nTiros por equipo:")
@@ -95,60 +119,69 @@ if "shot.outcome.name" in shots.columns:
         .to_string()
     )
 
-columnas_detalle_tiros = [
+columnas_detalle = [
     "minute",
     "team.name",
     "player.name",
     "shot.statsbomb_xg",
     "shot.outcome.name",
 ]
-columnas_detalle_tiros = [
-    col for col in columnas_detalle_tiros
-    if col in shots.columns
+columnas_detalle = [
+    columna for columna in columnas_detalle
+    if columna in shots.columns
 ]
 
 print("\nDetalle de los tiros:")
-print(
-    shots[columnas_detalle_tiros].to_string(index=False)
-)
+print(shots[columnas_detalle].to_string(index=False))
 
 
-# ==================================================
-# 4. VALIDACIÓN DE LOS GOLES
-# ==================================================
+# ============================================================
+# 4. VALIDACIÓN DE GOLES
+# ============================================================
 
-print("\n" + "=" * 50)
-print("VALIDACIÓN DEL MARCADOR")
-print("=" * 50)
+print("\n" + "=" * 60)
+print("VALIDACIÓN DE GOLES")
+print("=" * 60)
 
 if "shot.outcome.name" in shots.columns:
-    goals = shots[shots["shot.outcome.name"] == "Goal"]
+    goals = shots[
+        shots["shot.outcome.name"] == "Goal"
+    ].copy()
+
+    columnas_goles = [
+        "minute",
+        "team.name",
+        "player.name",
+    ]
+    columnas_goles = [
+        columna for columna in columnas_goles
+        if columna in goals.columns
+    ]
 
     print("\nGoles registrados en eventos de tiro:")
-
-    columnas_goles = [
-        "minute", "team.name", "player.name"
-    ]
-    columnas_goles = [
-        col for col in columnas_goles if col in goals.columns
-    ]
-
     print(goals[columnas_goles].to_string(index=False))
 else:
-    goals = pd.DataFrame()
-    print("\nNo existe la columna de resultado del tiro.")
+    print(
+        "\nNo se encuentra la columna "
+        "'shot.outcome.name'."
+    )
 
 if "type.name" in df.columns:
     own_goals = df[
-        df["type.name"].isin(["Own Goal For", "Own Goal Against"])
+        df["type.name"].isin(
+            ["Own Goal For", "Own Goal Against"]
+        )
     ]
 
     columnas_gol_propio = [
-        "minute", "type.name", "team.name", "player.name"
+        "minute",
+        "type.name",
+        "team.name",
+        "player.name",
     ]
     columnas_gol_propio = [
-        col for col in columnas_gol_propio
-        if col in own_goals.columns
+        columna for columna in columnas_gol_propio
+        if columna in own_goals.columns
     ]
 
     print("\nEventos de gol propio:")
@@ -157,73 +190,83 @@ if "type.name" in df.columns:
         print("No se han encontrado eventos de gol propio.")
     else:
         print(
-            own_goals[columnas_gol_propio].to_string(index=False)
+            own_goals[columnas_gol_propio]
+            .to_string(index=False)
         )
 
 
-# ==================================================
-# 5. RESUMEN DE TIROS Y GOLES ESPERADOS (xG)
-# ==================================================
+# ============================================================
+# 5. RESUMEN DE TIROS Y xG
+# ============================================================
 
-print("\nResumen por equipo:")
+print("\n" + "=" * 60)
+print("RESUMEN DE TIROS Y xG")
+print("=" * 60)
 
 if not shots.empty and "team.name" in shots.columns:
-    summary_data = {}
+    agregaciones = {}
 
     if "id" in shots.columns:
-        summary_data["tiros"] = ("id", "count")
+        agregaciones["tiros"] = ("id", "count")
     else:
-        summary_data["tiros"] = ("team.name", "size")
+        agregaciones["tiros"] = ("team.name", "size")
 
     if "shot.outcome.name" in shots.columns:
-        summary_data["goles_en_tiros"] = (
+        agregaciones["goles_en_tiros"] = (
             "shot.outcome.name",
             lambda serie: (serie == "Goal").sum(),
         )
 
     if "shot.statsbomb_xg" in shots.columns:
-        summary_data["xG"] = ("shot.statsbomb_xg", "sum")
+        agregaciones["xG"] = (
+            "shot.statsbomb_xg",
+            "sum",
+        )
 
-    summary = shots.groupby("team.name").agg(**summary_data)
-    print(summary.round(3).to_string())
+    resumen = shots.groupby("team.name").agg(**agregaciones)
+
+    print(resumen.round(3).to_string())
 else:
     print("No hay tiros disponibles para resumir.")
 
 if "type.name" in df.columns:
-    print("\nNúmero de eventos de gol propio:")
-    print("Own Goal For:", (df["type.name"] == "Own Goal For").sum())
+    print("\nEventos de gol propio:")
+    print(
+        "Own Goal For:",
+        (df["type.name"] == "Own Goal For").sum()
+    )
     print(
         "Own Goal Against:",
         (df["type.name"] == "Own Goal Against").sum()
     )
 
 
-# ==================================================
-# 6. PREPARACIÓN Y EXPORTACIÓN PARA POWER BI
-# ==================================================
-
-print("\n" + "=" * 50)
-print("EXPORTACIÓN DE DATOS PARA POWER BI")
-print("=" * 50)
-
-OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-
+# ============================================================
+# 6. FUNCIONES AUXILIARES
+# ============================================================
 
 def extract_coordinates(series, axis):
-    """Extrae una coordenada de una lista [x, y]."""
+    """Extrae la coordenada X o Y de una lista [x, y]."""
 
     return series.apply(
         lambda value: (
             value[axis]
-            if isinstance(value, list) and len(value) > axis
+            if isinstance(value, list)
+            and len(value) > axis
             else None
         )
     )
 
 
-# --------------------------------------------------
-# 6.1. TABLA GENERAL DE EVENTOS
-# --------------------------------------------------
+# ============================================================
+# 7. PREPARAR Y EXPORTAR EVENTOS
+# ============================================================
+
+print("\n" + "=" * 60)
+print("EXPORTACIÓN PARA POWER BI")
+print("=" * 60)
+
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 event_columns = [
     "id",
@@ -246,12 +289,13 @@ event_columns = [
 ]
 
 event_columns = [
-    col for col in event_columns if col in df.columns
+    columna for columna in event_columns
+    if columna in df.columns
 ]
 
 events_export = df[event_columns].copy()
 
-# Coordenadas iniciales
+# Coordenadas iniciales de los eventos.
 if "location" in events_export.columns:
     events_export["x"] = extract_coordinates(
         events_export["location"], 0
@@ -259,9 +303,12 @@ if "location" in events_export.columns:
     events_export["y"] = extract_coordinates(
         events_export["location"], 1
     )
-    events_export = events_export.drop(columns=["location"])
 
-# Coordenadas finales de los pases
+    events_export = events_export.drop(
+        columns=["location"]
+    )
+
+# Coordenadas finales de los pases.
 if "pass.end_location" in events_export.columns:
     events_export["pass_end_x"] = extract_coordinates(
         events_export["pass.end_location"], 0
@@ -269,11 +316,12 @@ if "pass.end_location" in events_export.columns:
     events_export["pass_end_y"] = extract_coordinates(
         events_export["pass.end_location"], 1
     )
+
     events_export = events_export.drop(
         columns=["pass.end_location"]
     )
 
-# Coordenadas finales de los tiros
+# Coordenadas finales de los tiros.
 if "shot.end_location" in events_export.columns:
     events_export["shot_end_x"] = extract_coordinates(
         events_export["shot.end_location"], 0
@@ -281,6 +329,7 @@ if "shot.end_location" in events_export.columns:
     events_export["shot_end_y"] = extract_coordinates(
         events_export["shot.end_location"], 1
     )
+
     events_export = events_export.drop(
         columns=["shot.end_location"]
     )
@@ -290,13 +339,13 @@ events_path = OUTPUT_DIR / "eventos_partido.csv"
 events_export.to_csv(
     events_path,
     index=False,
-    encoding="utf-8-sig"
+    encoding="utf-8-sig",
 )
 
 
-# --------------------------------------------------
-# 6.2. TABLA ESPECÍFICA DE TIROS
-# --------------------------------------------------
+# ============================================================
+# 8. PREPARAR Y EXPORTAR TIROS
+# ============================================================
 
 shot_columns = [
     "id",
@@ -318,12 +367,13 @@ shot_columns = [
 ]
 
 shot_columns = [
-    col for col in shot_columns if col in shots.columns
+    columna for columna in shot_columns
+    if columna in shots.columns
 ]
 
 shots_export = shots[shot_columns].copy()
 
-# Coordenadas de inicio y finalización
+# Coordenadas de origen y finalización de cada tiro.
 for source_column, prefix in [
     ("location", "shot"),
     ("shot.end_location", "end"),
@@ -335,11 +385,12 @@ for source_column, prefix in [
         shots_export[f"{prefix}_y"] = extract_coordinates(
             shots_export[source_column], 1
         )
+
         shots_export = shots_export.drop(
             columns=[source_column]
         )
 
-# Nombres de columnas utilizados por Power BI
+# Nombres de columnas compatibles con Power BI.
 shots_export = shots_export.rename(
     columns={
         "team.name": "equipo",
@@ -362,32 +413,36 @@ shots_path = OUTPUT_DIR / "tiros_partido.csv"
 shots_export.to_csv(
     shots_path,
     index=False,
-    encoding="utf-8-sig"
+    encoding="utf-8-sig",
 )
 
 
-# ==================================================
-# 7. CONFIRMACIÓN DE LA EXPORTACIÓN
-# ==================================================
+# ============================================================
+# 9. RESUMEN FINAL DE LA EXPORTACIÓN
+# ============================================================
 
-print("\n" + "=" * 50)
+print("\n" + "=" * 60)
 print("EXPORTACIÓN COMPLETADA")
-print("=" * 50)
+print("=" * 60)
 
-print(f"\nID del partido procesado: {MATCH_ID}")
+print(f"\nPartido procesado: {MATCH_ID}")
 
 print(f"\nEventos exportados: {len(events_export)}")
-print(f"Columnas de eventos: {len(events_export.columns)}")
+print(
+    f"Columnas de eventos: {len(events_export.columns)}"
+)
 print(f"Archivo: {events_path.resolve()}")
 
 print(f"\nTiros exportados: {len(shots_export)}")
-print(f"Columnas de tiros: {len(shots_export.columns)}")
+print(
+    f"Columnas de tiros: {len(shots_export.columns)}"
+)
 print(f"Archivo: {shots_path.resolve()}")
 
-print("\nColumnas disponibles en la tabla de tiros:")
+print("\nColumnas de la tabla de tiros:")
 print(shots_export.columns.tolist())
 
 print("\nPrimeros tiros exportados:")
 print(shots_export.head().to_string(index=False))
 
-print("\nYa puedes actualizar los datos en Power BI.")
+print("\nPreparación de datos finalizada correctamente.")
